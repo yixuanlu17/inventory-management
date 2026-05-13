@@ -1,5 +1,5 @@
 <template>
-  <div class="profile-menu">
+  <div class="profile-menu" :class="{ collapsed: isCollapsed }">
     <button
       class="profile-button"
       @click="toggleDropdown"
@@ -77,9 +77,11 @@
 import { ref, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
+import { useSidebar } from '../composables/useSidebar'
 
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
+const { isCollapsed } = useSidebar()
 
 const isDropdownOpen = ref(false)
 const emit = defineEmits(['show-profile-details', 'show-tasks'])
@@ -131,6 +133,7 @@ const handleLogout = () => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  width: 100%;
 }
 
 .profile-button:hover {
@@ -161,16 +164,42 @@ const handleLogout = () => {
 .chevron {
   color: #64748b;
   transition: transform 0.2s ease;
+  transform: rotate(180deg);
 }
 
 .chevron-open {
-  transform: rotate(180deg);
+  transform: rotate(0deg);
+}
+
+.profile-menu.collapsed .profile-name,
+.profile-menu.collapsed .chevron {
+  display: none;
+}
+
+.profile-menu.collapsed .profile-button {
+  justify-content: center;
+  padding: 0.5rem;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .profile-name,
+  .chevron {
+    display: none;
+  }
+
+  .profile-button {
+    justify-content: center;
+    padding: 0.5rem;
+    width: auto;
+  }
 }
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: auto;
   min-width: 280px;
   background: white;
   border: 1px solid #e2e8f0;
