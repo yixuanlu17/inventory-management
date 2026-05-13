@@ -1,5 +1,5 @@
 <template>
-  <div class="language-switcher">
+  <div class="language-switcher" :class="{ collapsed: isCollapsed }">
     <button
       class="language-button"
       @click="toggleDropdown"
@@ -57,8 +57,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { useSidebar } from '../composables/useSidebar'
 
 const { currentLocale, setLocale, availableLocales, localeName } = useI18n()
+const { isCollapsed } = useSidebar()
 
 const isDropdownOpen = ref(false)
 
@@ -106,6 +108,7 @@ const selectLanguage = (locale) => {
   font-family: inherit;
   font-size: 0.875rem;
   color: #334155;
+  width: 100%;
 }
 
 .language-button:hover {
@@ -126,16 +129,42 @@ const selectLanguage = (locale) => {
   color: #64748b;
   transition: transform 0.2s ease;
   flex-shrink: 0;
+  transform: rotate(180deg);
 }
 
 .chevron-open {
-  transform: rotate(180deg);
+  transform: rotate(0deg);
+}
+
+.language-switcher.collapsed .language-label,
+.language-switcher.collapsed .chevron {
+  display: none;
+}
+
+.language-switcher.collapsed .language-button {
+  justify-content: center;
+  padding: 0.5rem;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .language-label,
+  .chevron {
+    display: none;
+  }
+
+  .language-button {
+    justify-content: center;
+    padding: 0.5rem;
+    width: auto;
+  }
 }
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: auto;
   min-width: 160px;
   background: white;
   border: 1px solid #e2e8f0;
